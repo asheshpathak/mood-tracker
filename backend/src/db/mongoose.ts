@@ -35,6 +35,34 @@ export async function connectDatabase(): Promise<typeof mongoose> {
   }
 }
 
+/**
+ * Retries with exponential backoff instead of dying on the first failure.
+ *
+ * Railway's private network takes a few seconds to come up after a container
+ * starts, so the first attempt to reach `*.railway.internal` routinely fails on
+ * a cold deploy. Exiting there would fail the health check for a problem that
+ * resolves itself a second later.
+ */
+export async function connectDatabaseWithRetry(attempts = 8): Promise<void> {
+  for (let attempt = 1; attempt <= attempts; attempt += 1) {
+    try {
+      await connectDatabase();
+      return;
+    } catch (err) {
+      if (attempt === attempts) {
+        logger.fatal({ err }, `Could not reach MongoDB after ${attempts} attempts — exiting`);
+        process.exit(1);
+      }
+      const delay = Math.min(1000 * 2 ** (attempt - 1), 15_000);
+      logger.warn(
+        { attempt, delay, reason: (err as Error).message },
+        'MongoDB not reachable yet — retrying',
+      );
+      await new Promise((resolve) => setTimeout(resolve, delay));
+    }
+  }
+}
+
 export async function disconnectDatabase(): Promise<void> {
   connecting = null;
   await mongoose.connection.close(false);
