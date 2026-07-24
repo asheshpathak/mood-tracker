@@ -1,31 +1,104 @@
 import type { ReactNode } from 'react';
-import { ArrowDownRight, ArrowUpRight, Flame, Minus } from 'lucide-react';
+import { ArrowDownRight, ArrowUpRight, Minus } from 'lucide-react';
 import { cn } from '@/lib/cn';
-import type { Insight } from '@/lib/types';
+import { moodColorContinuous, moodInkColor, moodLabel } from '@/lib/mood';
+import type { Analytics, Insight } from '@/lib/types';
 
-export function StatTile({
+/**
+ * The lede for the page.
+ *
+ * This replaced four equally sized cards, which was the problem: it gave four
+ * unequal facts the same weight. Average mood is the finding. Check-ins, streak
+ * and coverage all answer a quieter second question — how much of this window is
+ * actually you, and therefore how much the finding is worth. So the mood reads
+ * as a headline and the rest as a footing beneath it.
+ *
+ * The rule between the two doubles as the coverage meter: it fills to the share
+ * of days logged, so the line separating the headline from its evidence *is*
+ * that evidence. Coverage stays written out as a percentage in the row below —
+ * the bar reinforces the number, it never carries it alone.
+ */
+export function SummaryLede({
+  summary,
+  streak,
+}: {
+  summary: Analytics['summary'];
+  streak: Analytics['streak'];
+}) {
+  const { avgPleasantness, coverage, daysLogged, entries, windowDays } = summary;
+  const perDay = daysLogged > 0 ? (entries / daysLogged).toFixed(1) : null;
+
+  return (
+    <section aria-label="Summary">
+      <p className="text-[0.6875rem] font-medium uppercase tracking-[0.08em] text-ink-faint">
+        Average mood
+      </p>
+
+      <div className="mt-2 flex flex-wrap items-baseline gap-x-3 gap-y-1">
+        <h2
+          className="text-[2.5rem] font-semibold leading-none tracking-[-0.035em] sm:text-[3rem]"
+          style={{ color: moodInkColor(avgPleasantness) }}
+        >
+          {moodLabel(avgPleasantness)}
+        </h2>
+        <DeltaBadge delta={summary.deltaPleasantness} />
+      </div>
+
+      <div
+        className="mt-5 h-[3px] w-full overflow-hidden rounded-full bg-line"
+        role="img"
+        aria-label={`${coverage}% of the last ${windowDays} days have a check-in`}
+      >
+        <div
+          className="h-full rounded-full transition-[width] duration-700 ease-[var(--ease-calm)]"
+          style={{
+            // A hair of width even at 0% so the meter never reads as a rendering
+            // fault on an empty window.
+            width: `${Math.max(coverage, 1.5)}%`,
+            backgroundColor: moodColorContinuous(avgPleasantness),
+          }}
+        />
+      </div>
+
+      <dl className="mt-3.5 grid grid-cols-3 divide-x divide-line">
+        <Figure
+          label="Check-ins"
+          value={entries}
+          detail={perDay ? `${perDay} a day` : 'none yet'}
+        />
+        <Figure
+          label="Streak"
+          value={`${streak.current}d`}
+          detail={streak.longest > 0 ? `best ${streak.longest}d` : 'start today'}
+        />
+        <Figure
+          label="Logged"
+          value={`${coverage}%`}
+          detail={`${daysLogged} of ${windowDays} days`}
+        />
+      </dl>
+    </section>
+  );
+}
+
+function Figure({
   label,
   value,
   detail,
-  accent,
 }: {
   label: string;
   value: ReactNode;
-  detail?: ReactNode;
-  accent?: string;
+  detail: string;
 }) {
   return (
-    <div className="card p-4">
-      <p className="text-[0.6875rem] font-medium uppercase tracking-[0.08em] text-ink-faint">
+    <div className="px-4 first:pl-0 last:pr-0">
+      <dt className="text-[0.6875rem] font-medium uppercase tracking-[0.08em] text-ink-faint">
         {label}
-      </p>
-      <p
-        className="mt-1.5 text-[1.5rem] font-semibold leading-none tracking-tight"
-        style={accent ? { color: accent } : undefined}
-      >
+      </dt>
+      <dd className="mt-1.5 text-[1.375rem] font-semibold leading-none tracking-tight tabular-nums">
         {value}
-      </p>
-      {detail ? <p className="mt-1.5 text-[0.75rem] text-ink-faint">{detail}</p> : null}
+      </dd>
+      <dd className="mt-1 text-[0.75rem] text-ink-faint">{detail}</dd>
     </div>
   );
 }
@@ -42,18 +115,6 @@ export function DeltaBadge({ delta }: { delta: number | null }) {
       <Icon className="size-3.5" strokeWidth={2.4} />
       {flat ? 'Steady' : `${delta > 0 ? '+' : ''}${Math.round(delta * 50)}%`}
       <span className="font-normal text-ink-faint"> vs before</span>
-    </span>
-  );
-}
-
-export function StreakBadge({ current, longest }: { current: number; longest: number }) {
-  if (current === 0) {
-    return <p className="text-[0.75rem] text-ink-faint">Log today to start a streak</p>;
-  }
-  return (
-    <span className="inline-flex items-center gap-1 text-[0.75rem] text-ink-faint">
-      <Flame className="size-3.5 text-caution" strokeWidth={2.2} />
-      Best {longest} {longest === 1 ? 'day' : 'days'}
     </span>
   );
 }

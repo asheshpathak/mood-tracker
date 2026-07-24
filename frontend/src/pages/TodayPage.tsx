@@ -8,11 +8,9 @@ import { MoodCard, MoodDot } from '@/components/mood/MoodCard';
 import { Button } from '@/components/ui/Button';
 import { SectionTitle } from '@/components/ui/Card';
 import { EmptyState, ErrorState, Skeleton } from '@/components/ui/States';
-import { StatTile } from '@/components/insights/Stats';
 import { useGetAnalyticsQuery, useGetTodayQuery } from '@/features/moods/moodApi';
-import { useGetObservationStatsQuery } from '@/features/observations/observationApi';
 import { errorMessage } from '@/lib/api';
-import { greeting, pluralise, relativeTime } from '@/lib/format';
+import { greeting, pluralise } from '@/lib/format';
 import { describeMood, moodColorContinuous } from '@/lib/mood';
 
 export function TodayPage() {
@@ -21,7 +19,6 @@ export function TodayPage() {
 
   const today = useGetTodayQuery();
   const analytics = useGetAnalyticsQuery('7d');
-  const observations = useGetObservationStatsQuery();
 
   const firstName = user?.name.split(' ')[0] ?? '';
   const entries = today.data?.entries ?? [];
@@ -54,32 +51,6 @@ export function TodayPage() {
           />
         )}
       </section>
-
-      <div className="mt-4 grid grid-cols-3 gap-2.5 sm:gap-3">
-        <StatTile
-          label="Streak"
-          value={analytics.isLoading ? '—' : `${analytics.data?.streak.current ?? 0}d`}
-          detail={
-            analytics.data?.streak.longest
-              ? `Best ${analytics.data.streak.longest} days`
-              : 'Start today'
-          }
-        />
-        <StatTile
-          label="This week"
-          value={analytics.isLoading ? '—' : `${analytics.data?.summary.entries ?? 0}`}
-          detail={`${analytics.data?.summary.daysLogged ?? 0} of 7 days`}
-        />
-        <StatTile
-          label="Observations"
-          value={observations.isLoading ? '—' : `${observations.data?.total ?? 0}`}
-          detail={
-            observations.data?.lastRecordedAt
-              ? `Last ${relativeTime(observations.data.lastRecordedAt)}`
-              : 'None yet'
-          }
-        />
-      </div>
 
       <section className="mt-8">
         <SectionTitle

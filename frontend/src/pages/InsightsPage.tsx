@@ -8,13 +8,12 @@ import {
   WeekdayStrip,
 } from '@/components/insights/Charts';
 import { TrendChart } from '@/components/insights/TrendChart';
-import { DeltaBadge, InsightCard, StatTile, StreakBadge } from '@/components/insights/Stats';
+import { InsightCard, SummaryLede } from '@/components/insights/Stats';
 import { Card, CardHeader, SectionTitle } from '@/components/ui/Card';
 import { Segmented } from '@/components/ui/Segmented';
 import { ErrorState, Skeleton } from '@/components/ui/States';
 import { useGetAnalyticsQuery } from '@/features/moods/moodApi';
 import { errorMessage } from '@/lib/api';
-import { moodColorContinuous, moodLabel } from '@/lib/mood';
 import type { RangeKey } from '@/lib/types';
 
 const RANGES = [
@@ -59,29 +58,7 @@ export function InsightsPage() {
         </Card>
       ) : (
         <div className={isFetching ? 'opacity-60 transition-opacity' : 'transition-opacity'}>
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-            <StatTile
-              label="Average mood"
-              value={moodLabel(data.summary.avgPleasantness)}
-              accent={moodColorContinuous(data.summary.avgPleasantness)}
-              detail={<DeltaBadge delta={data.summary.deltaPleasantness} />}
-            />
-            <StatTile
-              label="Check-ins"
-              value={data.summary.entries}
-              detail={`across ${data.summary.daysLogged} days`}
-            />
-            <StatTile
-              label="Streak"
-              value={`${data.streak.current}d`}
-              detail={<StreakBadge current={data.streak.current} longest={data.streak.longest} />}
-            />
-            <StatTile
-              label="Coverage"
-              value={`${data.summary.coverage}%`}
-              detail={`of the last ${data.summary.windowDays} days`}
-            />
-          </div>
+          <SummaryLede summary={data.summary} streak={data.streak} />
 
           {data.insights.length > 0 ? (
             <section className="mt-8">
@@ -165,11 +142,7 @@ export function InsightsPage() {
 function LoadingSkeleton() {
   return (
     <div className="space-y-4">
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-        {Array.from({ length: 4 }, (_, i) => (
-          <Skeleton key={i} className="h-[5.5rem] rounded-[var(--radius-card)]" />
-        ))}
-      </div>
+      <Skeleton className="h-[9.5rem] rounded-[var(--radius-card)]" />
       <Skeleton className="h-72 rounded-[var(--radius-card)]" />
       <div className="grid gap-4 lg:grid-cols-2">
         <Skeleton className="h-56 rounded-[var(--radius-card)]" />
