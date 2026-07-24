@@ -1,0 +1,25 @@
+node_modules/
+dist/
+build/
+coverage/
+.vercel/
+.turbo/
+
+# env
+.env
+.env.*
+!.env.example
+
+# logs
+*.log
+npm-debug.log*
+logs/
+
+# os / editor
+.DS_Store
+.idea/
+.vscode/*
+!.vscode/extensions.json
+
+# local mongo data (if you run mongod from the repo)
+.data/
