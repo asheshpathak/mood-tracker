@@ -174,3 +174,4 @@ Errors are always `{ "error": { "code", "message", "details?" } }`, where
 | `npm run typecheck` | Type-check both, no output |
 | `npm run seed` | Reset and reseed the demo account |
 # mood-tracker
+# mood-tracker
