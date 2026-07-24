@@ -11,6 +11,16 @@ import type { ApiErrorBody, AuthResponse } from './types';
 
 const API_URL = (import.meta.env.VITE_API_URL ?? 'http://localhost:4000/api').replace(/\/$/, '');
 
+// Every route lives under /api. Dropping the suffix makes each request 404 —
+// which the browser reports as an opaque CORS failure, sending you hunting in
+// entirely the wrong place. Say it plainly instead.
+if (!API_URL.endsWith('/api')) {
+  console.warn(
+    `[mood] VITE_API_URL is "${API_URL}", which does not end in /api. ` +
+      'Requests will almost certainly 404 — check the environment variable on your host.',
+  );
+}
+
 const rawBaseQuery = fetchBaseQuery({
   baseUrl: API_URL,
   prepareHeaders: (headers, { getState }) => {
