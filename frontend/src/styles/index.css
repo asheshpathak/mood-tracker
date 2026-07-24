@@ -95,8 +95,12 @@
   html {
     -webkit-text-size-adjust: 100%;
     scroll-behavior: smooth;
-    /* Anchor scrolling clears the sticky header. */
-    scroll-padding-top: 5rem;
+    /* Anchor scrolling clears the sticky header and, installed, the status bar. */
+    scroll-padding-top: calc(env(safe-area-inset-top) + 5rem);
+    /* Nothing in this app scrolls sideways at the page level. `clip` rather than
+       `hidden` on purpose: `hidden` would turn the viewport into a scroll
+       container and break every `position: sticky` inside it. */
+    overflow-x: clip;
   }
 
   body {
@@ -105,6 +109,13 @@
     font-variant-ligatures: contextual;
     /* iOS: keep the bounce from revealing a white gutter under the tab bar. */
     overscroll-behavior-y: none;
+    /* Kills the double-tap-to-zoom gesture and its 300ms tap delay with it.
+       The mood pad sets its own `touch-none`, so dragging is unaffected. */
+    touch-action: manipulation;
+    /* Notes and tags are free text — a pasted URL or one long word would
+       otherwise push the page wider than the screen. `break-word` only breaks a
+       word that cannot fit, so ordinary prose wraps normally. */
+    overflow-wrap: break-word;
   }
 
   h1,
@@ -129,13 +140,6 @@
   button {
     font: inherit;
     color: inherit;
-  }
-
-  /* iOS zooms any input rendered below 16px on focus. */
-  input,
-  textarea,
-  select {
-    font-size: max(16px, 1em);
   }
 
   ::-webkit-scrollbar {
@@ -189,15 +193,25 @@
 }
 
 @layer utilities {
-  /* Home-indicator / notch aware spacing. */
+  /* Notch / home-indicator aware spacing.
+
+     Installed to the home screen, iOS renders the app edge to edge under the
+     status bar and home indicator, so every outermost surface has to add those
+     insets back itself. In a normal browser tab the insets resolve to 0 and
+     only the comfort minimums below apply. */
   .pb-safe {
     padding-bottom: max(env(safe-area-inset-bottom), 0.5rem);
   }
   .pt-safe {
-    padding-top: env(safe-area-inset-top);
+    padding-top: max(env(safe-area-inset-top), 0.5rem);
   }
   .mb-safe {
     margin-bottom: env(safe-area-inset-bottom);
+  }
+  /* Landscape on a notched phone puts the rounded corner over the gutter. */
+  .px-safe {
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
   }
 
   .text-gradient {
@@ -206,6 +220,22 @@
     background-clip: text;
     color: transparent;
   }
+}
+
+/* ───────────────────────────────────────────────────────────────────────────
+   The 16px floor on text controls
+
+   iOS zooms the entire page in when it focuses a control rendered below 16px,
+   and installed to a home screen that zoom never resets — it persists across
+   launches, so one tap on a 15px password field left the app permanently
+   zoomed. This has to sit OUTSIDE @layer to work: unlayered declarations beat
+   every cascade layer, so a `text-[0.875rem]` utility can no longer reintroduce
+   the bug. A control that genuinely wants to be larger sets --control-size.
+   ─────────────────────────────────────────────────────────────────────────── */
+input:not([type='range']):not([type='checkbox']):not([type='radio']),
+textarea,
+select {
+  font-size: max(16px, var(--control-size, 1em));
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -145,7 +145,7 @@ export function CheckInSheet({
                 value={draft.recordedAt}
                 max={toLocalDateInputValue(new Date().toISOString())}
                 onChange={(e) => setDraft((d) => ({ ...d, recordedAt: e.target.value }))}
-                className="rounded-xl border border-line bg-surface px-3 py-2 text-[0.8125rem] focus:border-brand focus:outline-none focus:ring-4 focus:ring-brand/12"
+                className="rounded-xl border border-line bg-surface px-3 py-2 text-[1rem] focus:border-brand focus:outline-none focus:ring-4 focus:ring-brand/12"
               />
             </label>
           ) : (

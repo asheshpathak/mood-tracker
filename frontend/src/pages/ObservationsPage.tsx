@@ -89,7 +89,7 @@ export function ObservationsPage() {
           }
         />
 
-        <div className="no-scrollbar edge-fade -mx-4 flex gap-2 overflow-x-auto px-4 sm:mx-0 sm:px-0">
+        <div className="no-scrollbar edge-fade -mx-5 flex gap-2 overflow-x-auto px-5 sm:mx-0 sm:px-0">
           <Chip
             size="sm"
             selected={pinnedOnly}

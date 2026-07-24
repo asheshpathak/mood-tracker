@@ -56,7 +56,10 @@ export function TrendChart({
   const ticks = series.filter((_, i) => i % tickStep === 0).map((d) => d.label);
 
   return (
-    <div className="h-56 w-full">
+    // Recharts measures the parent and writes a pixel width onto the svg, which
+    // can briefly exceed it after a rotation — clip so that never reaches the
+    // page as a sideways scroll. min-w-0 lets it shrink inside a flex parent.
+    <div className="h-56 w-full min-w-0 overflow-hidden">
       <ResponsiveContainer width="100%" height="100%">
         <ComposedChart data={series} margin={{ top: 8, right: 8, bottom: 0, left: 0 }}>
           <defs>

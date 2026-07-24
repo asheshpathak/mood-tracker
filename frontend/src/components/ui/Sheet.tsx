@@ -65,7 +65,10 @@ export function Sheet({
             exit={{ y: '3%', opacity: 0 }}
             transition={{ type: 'spring', stiffness: 380, damping: 36 }}
             className={cn(
-              'relative flex max-h-[92dvh] w-full flex-col overflow-hidden bg-surface shadow-float',
+              // On a phone the sheet grows up from the bottom, so its ceiling has
+              // to stop short of the status bar rather than at a flat 92%.
+              'relative flex w-full flex-col overflow-hidden bg-surface shadow-float',
+              'max-h-[calc(100dvh_-_env(safe-area-inset-top)_-_1rem)] sm:max-h-[92dvh]',
               'rounded-t-[var(--radius-sheet)] sm:rounded-[var(--radius-sheet)]',
               size === 'lg' ? 'sm:max-w-2xl' : 'sm:max-w-lg',
             )}

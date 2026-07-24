@@ -2,7 +2,7 @@ import { forwardRef, useId, type InputHTMLAttributes, type ReactNode, type Texta
 import { cn } from '@/lib/cn';
 
 const CONTROL =
-  'w-full rounded-2xl border border-line bg-surface px-4 text-[0.9375rem] text-ink placeholder:text-ink-faint ' +
+  'w-full rounded-2xl border border-line bg-surface px-4 text-[1rem] text-ink placeholder:text-ink-faint ' +
   'transition-[border-color,box-shadow,background-color] duration-200 ' +
   'hover:border-line-strong focus:border-brand focus:outline-none focus:ring-4 focus:ring-brand/12 ' +
   'disabled:bg-surface-sunk disabled:text-ink-faint';

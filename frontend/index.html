@@ -2,9 +2,13 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <!-- Zoom is pinned. Installed to a home screen this app is a fixed-layout
+         surface, and iOS persists any pinch-zoom across launches — one stray
+         pinch and every subsequent launch opens zoomed in. System text size
+         (Dynamic Type / per-app zoom) still applies. -->
     <meta
       name="viewport"
-      content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=5"
+      content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"
     />
     <title>Mood — a calm place to notice how you feel</title>
     <meta

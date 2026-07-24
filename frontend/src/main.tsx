@@ -4,10 +4,13 @@ import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
 import App from './App';
 import { store } from './app/store';
+import { lockZoom } from './lib/lockZoom';
 import './styles/index.css';
 
 const container = document.getElementById('root');
 if (!container) throw new Error('Root element is missing from index.html');
+
+lockZoom();
 
 createRoot(container).render(
   <StrictMode>

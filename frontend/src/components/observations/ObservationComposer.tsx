@@ -158,7 +158,7 @@ export function ObservationComposer({
               onBlur={() => addTag(tagDraft)}
               placeholder={tags.length === 0 ? 'patterns, work, sleep…' : ''}
               maxLength={28}
-              className="min-w-24 flex-1 bg-transparent py-1 text-[0.875rem] placeholder:text-ink-faint focus:outline-none"
+              className="min-w-24 flex-1 bg-transparent py-1 text-[1rem] placeholder:text-ink-faint focus:outline-none"
             />
           </div>
 
@@ -186,7 +186,7 @@ export function ObservationComposer({
               value={occurredAt}
               max={toLocalDateInputValue(new Date().toISOString())}
               onChange={(e) => setOccurredAt(e.target.value)}
-              className="rounded-xl border border-line bg-surface px-3 py-2 text-[0.8125rem] focus:border-brand focus:outline-none focus:ring-4 focus:ring-brand/12"
+              className="rounded-xl border border-line bg-surface px-3 py-2 text-[1rem] focus:border-brand focus:outline-none focus:ring-4 focus:ring-brand/12"
             />
           </label>
 

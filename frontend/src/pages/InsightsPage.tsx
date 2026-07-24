@@ -41,7 +41,7 @@ export function InsightsPage() {
         subtitle="Patterns only mean something once there is enough of you in here. Read them as questions, not verdicts."
       />
 
-      <div className="sticky top-0 z-20 -mx-4 mb-5 px-4 py-2 glass sm:-mx-6 sm:px-6">
+      <div className="sticky top-[env(safe-area-inset-top)] z-20 -mx-5 mb-5 px-5 py-2 glass sm:-mx-6 sm:px-6">
         <Segmented options={RANGES} value={range} onChange={setRange} />
       </div>
 

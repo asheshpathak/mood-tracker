@@ -1,7 +1,7 @@
 import { useState, type ReactNode } from 'react';
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { motion } from 'motion/react';
-import { BarChart3, Home, Lightbulb, Plus, Settings, type LucideIcon } from 'lucide-react';
+import { Activity, Home, Lightbulb, Plus, Settings, type LucideIcon } from 'lucide-react';
 import { useAuth } from '@/app/hooks';
 import { cn } from '@/lib/cn';
 import { initials } from '@/lib/format';
@@ -16,7 +16,7 @@ interface NavItem {
 
 const NAV: NavItem[] = [
   { to: '/', label: 'Today', icon: Home },
-  { to: '/insights', label: 'Insights', icon: BarChart3 },
+  { to: '/insights', label: 'Insights', icon: Activity },
   { to: '/observations', label: 'Notes', icon: Lightbulb },
   { to: '/settings', label: 'You', icon: Settings },
 ];
@@ -36,10 +36,18 @@ export function AppShell() {
 
   return (
     <div className="min-h-dvh lg:flex">
+      {/* Installed, the page scrolls under the status bar — this frosts the strip
+          it passes through so text never collides with the clock. Zero height in
+          a browser tab, where the inset is 0. */}
+      <div
+        aria-hidden="true"
+        className="glass fixed inset-x-0 top-0 z-30 h-[env(safe-area-inset-top)] lg:hidden"
+      />
+
       <SideRail user={user?.name ?? ''} onCompose={compose} composeLabel={composeLabel} />
 
       <div className="flex min-w-0 flex-1 flex-col">
-        <main className="mx-auto w-full max-w-2xl flex-1 px-4 pb-32 pt-3 sm:px-6 lg:max-w-5xl lg:pb-16 lg:pt-8">
+        <main className="mx-auto w-full max-w-2xl flex-1 px-5 pb-32 pt-[calc(env(safe-area-inset-top)_+_1.5rem)] sm:px-6 lg:max-w-5xl lg:pb-16 lg:pt-8">
           <Outlet key={location.pathname} />
         </main>
       </div>
@@ -69,7 +77,7 @@ function SideRail({
   composeLabel: string;
 }) {
   return (
-    <aside className="sticky top-0 hidden h-dvh w-60 shrink-0 flex-col border-r border-line bg-surface/60 px-4 py-7 lg:flex">
+    <aside className="sticky top-0 hidden h-dvh w-60 shrink-0 flex-col border-r border-line bg-surface/60 px-4 pb-[calc(env(safe-area-inset-bottom)_+_1.75rem)] pt-[calc(env(safe-area-inset-top)_+_1.75rem)] lg:flex">
       <div className="flex items-center gap-2.5 px-2">
         <Logo />
         <span className="text-[0.9375rem] font-semibold tracking-tight">Mood</span>
@@ -117,8 +125,8 @@ function TabBar({ onCompose, composeLabel }: { onCompose: () => void; composeLab
   const [left, right] = [NAV.slice(0, 2), NAV.slice(2)];
 
   return (
-    <nav className="glass fixed inset-x-0 bottom-0 z-40 hairline-t pb-safe lg:hidden">
-      <div className="mx-auto flex max-w-md items-center justify-around px-2 pt-1.5">
+    <nav className="glass px-safe fixed inset-x-0 bottom-0 z-40 hairline-t pb-safe lg:hidden">
+      <div className="mx-auto flex max-w-md items-center justify-around px-2 pb-0.5 pt-2">
         {left.map((item) => (
           <Tab key={item.to} item={item} />
         ))}

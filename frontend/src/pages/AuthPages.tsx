@@ -19,7 +19,7 @@ function AuthShell({
   footer: React.ReactNode;
 }) {
   return (
-    <div className="relative flex min-h-dvh flex-col items-center justify-center overflow-hidden px-5 py-10">
+    <div className="relative flex min-h-dvh flex-col items-center justify-center overflow-hidden px-5 pb-[calc(env(safe-area-inset-bottom)_+_2.5rem)] pt-[calc(env(safe-area-inset-top)_+_2.5rem)]">
       {/* A single soft aurora — the only decorative element in the whole app. */}
       <div
         aria-hidden="true"
